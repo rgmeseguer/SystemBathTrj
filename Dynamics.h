@@ -81,10 +81,12 @@ void Dynamics::setTime(double t)
 void Dynamics::setLangevin(double mu /*bath mass*/, double beta /*Effective Temperature*/, double gamma /*Dissipation Factor*/)
 {
 	sigma = sqrt(2 * gamma*fabs(_timeStep) / beta);
-	A = gamma * ut.absol(_timeStep) / (2 * mu);
-	B = 1 / (1 + A);
-	A = (1 - A) / (1 + A);
-	_kineticBath = 1 / (2 * beta);
+	//A = gamma * ut.absol(_timeStep) / (2 * mu);
+	//B = 1 / (1 + A);
+	//A = (1 - A) / (1 + A);
+	//_kineticBath = 1 / (2 * beta);
+	
+	A = gamma;
 }
 
 #pragma endregion
@@ -121,9 +123,8 @@ void Dynamics::DynamicStep(Oscillator & osc)
  /// </summary>
 void Dynamics::DynamicStep(Oscillator & osc, double rtherm)
 {
-
-	//initial acceleration
-	std::vector<double> initialAccel = osc._acceleration;
+	//Bath has to be always the last defined degree of freedom
+	osc._acceleration.back() += -(osc._velocity.back() * A) + rtherm;
 
 	//Set the new position
 	for (int unsigned i = 0; i < osc._size - 1; i++)
@@ -131,17 +132,15 @@ void Dynamics::DynamicStep(Oscillator & osc, double rtherm)
 		osc._position[i] += _timeStep * (osc._velocity[i] + osc._acceleration[i] * _halfTimeStep);
 	}
 
-	//Bath has to be always the last defined degree of freedom
-	osc._acceleration.back() += B * _timeStep*(osc._velocity.back() + osc._acceleration.back() * _halfTimeStep + rtherm / (2 * osc._redMass.back()));
 	osc.calcAcceleration();
-	osc._position.back() += _timeStep * (osc._velocity.back() + osc._acceleration.back() * _halfTimeStep);
+	osc._acceleration.back() += -(osc._velocity.back() * A) + rtherm;
 
 	//Set the new Velocity
 	for (int unsigned i = 0; i < osc._size - 1; i++)
 	{
-		osc._velocity[i] += _halfTimeStep * (initialAccel[i] + osc._acceleration[i]);
+		osc._velocity[i] += osc._acceleration[i] * _halfTimeStep;
 	}
-	osc._velocity.back() = A * osc._velocity.back() + _halfTimeStep * (initialAccel.back() + osc._acceleration.back()) + B * rtherm / osc._redMass.back();
+	
 }
 
 
