@@ -123,20 +123,21 @@ void Dynamics::DynamicStep(Oscillator & osc)
  /// </summary>
 void Dynamics::DynamicStep(Oscillator & osc, double rtherm)
 {
+	osc.calcAcceleration();
 	//Bath has to be always the last defined degree of freedom
-	osc._acceleration.back() += -(osc._velocity.back() * A) + rtherm;
+	osc._acceleration.back() += (osc._velocity.back() * A) + rtherm;
 
 	//Set the new position
-	for (int unsigned i = 0; i < osc._size - 1; i++)
+	for (int unsigned i = 0; i < osc._size; i++)
 	{
-		osc._position[i] += _timeStep * (osc._velocity[i] + osc._acceleration[i] * _halfTimeStep);
+		osc._position[i] += (osc._velocity[i] += osc._acceleration[i] * _halfTimeStep) * _timeStep;
 	}
 
 	osc.calcAcceleration();
-	osc._acceleration.back() += -(osc._velocity.back() * A) + rtherm;
+	osc._acceleration.back() = osc._acceleration.back() - (osc._velocity.back() * A) + rtherm;
 
 	//Set the new Velocity
-	for (int unsigned i = 0; i < osc._size - 1; i++)
+	for (int unsigned i = 0; i < osc._size; i++)
 	{
 		osc._velocity[i] += osc._acceleration[i] * _halfTimeStep;
 	}
