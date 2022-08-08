@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
 	/* Variables fot the Stochastic Dynamics */
 #if KEY_DETERM==0													
 	double beta = 4.;												// Effective temperature
-	double gamma = 0.01;												// Disipation factor
+	double gamma = 0.1;												// Disipation factor
 	Dynf.setLangevin(Oscf._redMass.back(), beta, gamma);
 
 	long T = time(0);														// Seed for the random 
@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
 	std::string filename = "trj_M" + std::to_string(int(bathMass)) + "T" + std::to_string(int(TrjTime)) + "_" + std::to_string(direction) + "_n" + std::to_string(I) + "_0-0.txt";
 	outputFile.open(filename, std::ios::out | std::ios::trunc);
 	/* Save the Initial properties of the trajectory */
-	outputFile << Oscf._position[0] << ' ' << Oscf._position[1] << ' ' << ' ' << Oscf.calcMomenta()[0] << ' ' << Oscf.calcMomenta()[0] << std::endl;
+	outputFile << Oscf._position[0] << ' ' << Oscf._position[1] << ' ' << ' ' << Oscf.calcMomenta()[0] << ' ' << Oscf.calcMomenta()[1] << std::endl;
 
 	/* Initate the trayectory */
 	for (size_t j = 0; j < Dynf._numberStep; j++)
@@ -157,7 +157,7 @@ int main(int argc, char* argv[])
 #pragma endregion
 
 		/* Save the properties of the trajectory */
-		outputFile << Oscf._position[0] << ' ' << Oscf._position[1] << ' ' << ' ' << Oscf.calcMomenta()[0] << ' ' << Oscf.calcMomenta()[0] << std::endl;
+		outputFile << Oscf._position[0] << ' ' << Oscf._position[1] << ' ' << ' ' << Oscf.calcMomenta()[0] << ' ' << Oscf.calcMomenta()[1] << std::endl;
 
 #if KEY_BOX==1
 		if (Oscf._position[0] > 1.5 || Oscf._position[0] < 1.3)
@@ -171,7 +171,7 @@ int main(int argc, char* argv[])
 
 			Oscf._velocity[0] = Oscf._velocity[0] * -1.;
 
-			outputFile << Oscf._position[0] << ' ' << Oscf._position[1] << ' ' << ' ' << Oscf.calcMomenta()[0] << ' ' << Oscf.calcMomenta()[0] << std::endl;
+			outputFile << Oscf._position[0] << ' ' << Oscf._position[1] << ' ' << ' ' << Oscf.calcMomenta()[0] << ' ' << Oscf.calcMomenta()[1] << std::endl;
 		}
 
 #endif // KEY_BOX==1
