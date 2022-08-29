@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
 	/* Initialize the Oscillators */
 #pragma region Oscillator Variables
 	Oscf.setInitP(R0, true);										// Initiate at the shadle point
-	Oscf.setInitialVel_NVE(Energy, I, 3);							// Set initial Random Velocities to keep energy
+	Oscf.setInitialVel_NVE(Energy, I, 100);							// Set initial Random Velocities to keep energy
 #pragma endregion
 
 	/* Initialize the dynamics */
@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
 	/* Variables fot the Stochastic Dynamics */
 #if KEY_DETERM==0													
 	double beta = 4.;												// Effective temperature
-	double gamma = 0.1;												// Disipation factor
+	double gamma = 4.;												// Disipation factor
 	Dynf.setLangevin(Oscf._redMass.back(), beta, gamma);
 
 	long T = time(0);														// Seed for the random 
