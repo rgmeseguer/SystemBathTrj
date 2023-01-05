@@ -15,7 +15,7 @@ utilities ut;
 void programUsage()
 {
 	std::cout << "Program Usage" << std::endl;
-	std::cout << ".exe [bathMass] [TrjTime] [Trj Number] [Direction {-1,1}] [Initial Point 1 (0 for saddle point)] [Initial Point 2 (0 for saddle point)]" << std::endl;
+	std::cout << ".exe [bathMass] [TrjTime] [Gamma] [Trj Number] [Direction {-1,1}] [Initial Point 1 (0 for saddle point)] [Initial Point 2 (0 for saddle point)]" << std::endl;
 }
 
 /* Potential and Gradient of the system */
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 {
 		/* Check the correct Parameters */
 #pragma region Program Usage
-	if ((argc != 7))
+	if ((argc != 8))
 	{
 		programUsage();
 		return 1;
@@ -60,20 +60,22 @@ int main(int argc, char* argv[])
 
 	/* Variables introduced by the User */
 #pragma region Input variables
-	double bathMass = strtof(argv[1], NULL);					// Mass of the Bath
-	double TrjTime = strtof(argv[2], NULL);						// Time of the Trj
-	int I = std::stoi(argv[3], NULL);							// Number of the trajectory
-	int direction = std::stoi(argv[4], NULL);					// Direction of the time Step
+	double bathMass = strtof(argv[1], NULL);			// Mass of the Bath
+	double TrjTime = strtof(argv[2], NULL);			// Time of the Trj
+	double gamma = strtof(argv[3], NULL);				// Disipation factor
+	int I = std::stoi(argv[4], NULL);						// Number of the trajectory
+	int direction = std::stoi(argv[5], NULL);				// Direction of the time Step
+												
 	
 	std::vector<double> R0;										// Initial Position
-	if (std::stoi(argv[5], NULL) == 0)
+	if (std::stoi(argv[6], NULL) == 0)
 	{
 		//std::cout << "Saddle point" << std::endl;
 		R0 = { 1.38795 ,2.26838 };
 	}
 	else
 	{
-		R0 = { strtof(argv[5], NULL) ,strtof(argv[6], NULL) };
+		R0 = { strtof(argv[6], NULL) ,strtof(argv[7], NULL) };
 	}
 
 #pragma endregion
@@ -118,7 +120,6 @@ int main(int argc, char* argv[])
 	/* Variables fot the Stochastic Dynamics */
 #if KEY_DETERM==0													
 	double beta = 4.;												// Effective temperature
-	double gamma = 4.;												// Disipation factor
 	Dynf.setLangevin(Oscf._redMass.back(), beta, gamma);
 
 	long T = time(0);														// Seed for the random 
